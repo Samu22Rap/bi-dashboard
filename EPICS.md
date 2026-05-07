@@ -91,24 +91,24 @@
 
 ---
 
-## Épico 5 — Filtros e Interatividade `[~] PRÓXIMO`
+## Épico 5 — Filtros e Interatividade `[x] CONCLUÍDO`
 > Filtros por página re-renderizando gráficos via estado React + URL params
 
 | # | Task | Status |
 |---|---|---|
-| 5.1 | Hook `useFilters()` com estado por página | `[ ]` |
-| 5.2 | Filtro Executivo — Mês (Jan–Jun) | `[ ]` |
-| 5.3 | Filtro Marketing — Plataforma + Canal | `[ ]` |
-| 5.4 | Filtro Produtos — Categoria | `[ ]` |
-| 5.5 | Filtro Clientes — Canal de aquisição + Faixa de renda | `[ ]` |
-| 5.6 | Filtro Diagnóstico — Dispositivo + Canal de origem | `[ ]` |
-| 5.7 | Persistência via `useSearchParams` — filtros na URL | `[ ]` |
+| 5.1 | Hook `useFilters()` com estado por página | `[x]` |
+| 5.2 | Filtro Executivo — Mês (Jan–Jun) | `[x]` |
+| 5.3 | Filtro Marketing — Plataforma + Canal | `[x]` |
+| 5.4 | Filtro Produtos — Categoria | `[x]` |
+| 5.5 | Filtro Clientes — Canal de aquisição + Faixa de renda | `[x]` |
+| 5.6 | Filtro Diagnóstico — Dispositivo + Canal de origem | `[x]` |
+| 5.7 | Persistência via `useSearchParams` — filtros na URL | `[x]` |
 
-**Entrega esperada:** Dashboard completo com filtros funcionais.
+**Commit:** `f2338af` · **Deploy:** https://bi-dashboard-red.vercel.app
 
 ---
 
-## Épico 6 — Polimento e Deploy Final `[ ]`
+## Épico 6 — Polimento e Deploy Final `[~] PRÓXIMO`
 > Vercel como deploy principal, GitHub Pages descontinuado
 
 | # | Task | Status |
@@ -123,4 +123,4 @@
 
 ---
 
-*Última atualização: 06/05/2026 — Épicos 0–4 concluídos, próximo: Épico 5*
+*Última atualização: 06/05/2026 — Épicos 0–5 concluídos, próximo: Épico 6*

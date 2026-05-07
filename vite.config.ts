@@ -10,4 +10,18 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          // React core — raramente muda, cache longo
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          // Recharts é grande (~600 kB); chunk separado para cache independente
+          'vendor-recharts': ['recharts'],
+          // Supabase client
+          'vendor-supabase': ['@supabase/supabase-js'],
+        },
+      },
+    },
+  },
 })
