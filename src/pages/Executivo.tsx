@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, RadialBarChart, RadialBar,
@@ -11,6 +10,7 @@ import { KpiCard, type KpiVariant } from '@/components/shared/KpiCard'
 import { KpiGrid } from '@/components/shared/KpiGrid'
 import { ChartCard } from '@/components/shared/ChartCard'
 import { FilterBar, FilterSelect } from '@/components/shared/FilterBar'
+import { useFilters } from '@/hooks/useFilters'
 import { brl, pct, integer } from '@/lib/formatters'
 import { CHART_COLORS, SEMANTIC_COLORS } from '@/lib/colors'
 
@@ -27,7 +27,8 @@ const META_CONVERSAO = 3.06
 
 export default function Executivo() {
   const { data, loading, error } = useExecutivo()
-  const [mes, setMes] = useState('all')
+  const [filters, setFilter, resetFilters] = useFilters({ mes: 'all' })
+  const mes = filters.mes
 
   if (loading) return <LoadingState />
   if (error)   return <ErrorState message={error} />
@@ -53,8 +54,8 @@ export default function Executivo() {
   return (
     <div className="space-y-6">
       {/* Filtros */}
-      <FilterBar onReset={() => setMes('all')}>
-        <FilterSelect label="Mes" value={mes} options={MES_OPTIONS} onChange={setMes} />
+      <FilterBar onReset={resetFilters}>
+        <FilterSelect label="Mes" value={mes} options={MES_OPTIONS} onChange={(v) => setFilter('mes', v)} />
       </FilterBar>
 
       {/* KPIs */}

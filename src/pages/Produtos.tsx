@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, Cell, ScatterChart,
@@ -11,6 +10,7 @@ import { KpiCard } from '@/components/shared/KpiCard'
 import { KpiGrid } from '@/components/shared/KpiGrid'
 import { ChartCard } from '@/components/shared/ChartCard'
 import { FilterBar, FilterSelect } from '@/components/shared/FilterBar'
+import { useFilters } from '@/hooks/useFilters'
 import { brl, pct, integer } from '@/lib/formatters'
 import { CHART_COLORS, SEMANTIC_COLORS } from '@/lib/colors'
 
@@ -18,7 +18,8 @@ const META_DESCONTO = 12
 
 export default function Produtos() {
   const { data, loading, error } = useProdutos()
-  const [categoria, setCategoria] = useState('all')
+  const [filters, setFilter, resetFilters] = useFilters({ categoria: 'all' })
+  const categoria = filters.categoria
 
   if (loading) return <LoadingState />
   if (error)   return <ErrorState message={error} />
@@ -36,8 +37,8 @@ export default function Produtos() {
 
   return (
     <div className="space-y-6">
-      <FilterBar onReset={() => setCategoria('all')}>
-        <FilterSelect label="Categoria" value={categoria} options={catOptions} onChange={setCategoria} />
+      <FilterBar onReset={resetFilters}>
+        <FilterSelect label="Categoria" value={categoria} options={catOptions} onChange={(v) => setFilter('categoria', v)} />
       </FilterBar>
 
       {/* KPIs */}
