@@ -25,44 +25,43 @@
 
 ---
 
-## Épico 1 — Layout Base `[~] EM ANDAMENTO`
+## Épico 1 — Layout Base `[x] CONCLUÍDO`
 > Shell do dashboard com sidebar escura, header e navegação entre 5 páginas
 
 | # | Task | Status |
 |---|---|---|
-| 1.1 | Instalar componentes shadcn: `button`, `badge`, `separator`, `tooltip` | `[ ]` |
-| 1.2 | Instalar `react-router-dom` | `[ ]` |
-| 1.3 | Criar `src/components/layout/AppLayout.tsx` — wrapper sidebar + conteúdo | `[ ]` |
-| 1.4 | Criar `src/components/layout/AppSidebar.tsx` — nav com 5 links, branding, rodapé | `[ ]` |
-| 1.5 | Criar `src/components/layout/AppHeader.tsx` — título dinâmico + badge "Dados Sintéticos" | `[ ]` |
-| 1.6 | Criar rotas em `App.tsx` com `react-router-dom` — `/`, `/marketing`, `/produtos`, `/clientes`, `/diagnostico` | `[ ]` |
-| 1.7 | Criar 5 páginas placeholder em `src/pages/` | `[ ]` |
-| 1.8 | Responsividade — sidebar colapsável em telas < 768px | `[ ]` |
-| 1.9 | Commit + deploy automático | `[ ]` |
+| 1.1 | Instalar componentes shadcn: `button`, `badge`, `separator` | `[x]` |
+| 1.2 | Instalar `react-router-dom` | `[x]` |
+| 1.3 | Criar `src/components/layout/AppLayout.tsx` — wrapper sidebar + conteúdo | `[x]` |
+| 1.4 | Criar `src/components/layout/AppSidebar.tsx` — nav com 5 links, branding, rodapé | `[x]` |
+| 1.5 | Criar `src/components/layout/AppHeader.tsx` — título dinâmico + badges | `[x]` |
+| 1.6 | Criar rotas em `App.tsx` — `/`, `/marketing`, `/produtos`, `/clientes`, `/diagnostico` | `[x]` |
+| 1.7 | Criar 5 páginas placeholder em `src/pages/` | `[x]` |
+| 1.8 | Commit + deploy para Vercel | `[x]` |
 
-**Entrega esperada:** Dashboard navegável com 5 rotas e sidebar funcional.
+**URL de produção:** https://bi-dashboard-red.vercel.app
 
 ---
 
-## Épico 2 — Camada de Dados `[ ]`
+## Épico 2 — Camada de Dados `[x] CONCLUÍDO`
 > Todos os dados do Supabase disponíveis via hooks React reutilizáveis
 
 | # | Task | Status |
 |---|---|---|
-| 2.1 | Criar `src/types/database.ts` — interfaces das 11 tabelas | `[ ]` |
-| 2.2 | Criar `src/hooks/useExecutivo.ts` — `kpis_resumo` + `receita_mensal` | `[ ]` |
-| 2.3 | Criar `src/hooks/useMarketing.ts` — `cac_por_canal` + `roi_por_campanha` | `[ ]` |
-| 2.4 | Criar `src/hooks/useProdutos.ts` — `receita_por_categoria` | `[ ]` |
-| 2.5 | Criar `src/hooks/useClientes.ts` — `clientes_por_canal` + `clientes_por_uf` + `renda_faixa` | `[ ]` |
-| 2.6 | Criar `src/hooks/useDiagnostico.ts` — `funil_dispositivo` + `conversao_por_canal` + `motivos_atendimento` | `[ ]` |
-| 2.7 | Criar `src/components/shared/LoadingState.tsx` + `ErrorState.tsx` | `[ ]` |
-| 2.8 | Criar `src/lib/formatters.ts` — `brl()`, `pct()`, `roi()` | `[ ]` |
-
-**Entrega esperada:** Console sem erros, todos os dados chegando corretamente.
+| 2.1 | Criar `src/types/database.ts` — interfaces das 11 tabelas (validadas via API REST) | `[x]` |
+| 2.2 | Criar `src/hooks/useExecutivo.ts` — `kpis_resumo` + `receita_mensal` | `[x]` |
+| 2.3 | Criar `src/hooks/useMarketing.ts` — `cac_por_canal` + `roi_por_campanha` + `receita_mensal` | `[x]` |
+| 2.4 | Criar `src/hooks/useProdutos.ts` — `receita_por_categoria` | `[x]` |
+| 2.5 | Criar `src/hooks/useClientes.ts` — `clientes_por_canal` + `clientes_por_uf` + `renda_faixa` | `[x]` |
+| 2.6 | Criar `src/hooks/useDiagnostico.ts` — `funil_dispositivo` + `conversao_por_canal` + `motivos_atendimento` | `[x]` |
+| 2.7 | Criar `src/components/shared/LoadingState.tsx` + `ErrorState.tsx` | `[x]` |
+| 2.8 | Criar `src/lib/formatters.ts` — `brl()`, `brlCompact()`, `pct()`, `roi()`, `integer()`, `days()` | `[x]` |
+| 2.9 | Validar hooks nas páginas placeholder — dados exibidos no placeholder | `[x]` |
+| 2.10 | Commit + deploy para Vercel | `[x]` |
 
 ---
 
-## Épico 3 — Componentes de UI Reutilizáveis `[ ]`
+## Épico 3 — Componentes de UI Reutilizáveis `[~] PRÓXIMO`
 > Biblioteca interna antes de montar as páginas completas
 
 | # | Task | Status |
@@ -125,4 +124,4 @@
 
 ---
 
-*Última atualização: 06/05/2026 — Épico 0 concluído, iniciando Épico 1*
+*Última atualização: 06/05/2026 — Épicos 0, 1 e 2 concluídos, próximo: Épico 3*
