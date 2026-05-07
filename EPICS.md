@@ -108,19 +108,19 @@
 
 ---
 
-## Épico 6 — Polimento e Deploy Final `[~] PRÓXIMO`
+## Épico 6 — Polimento e Deploy Final `[x] CONCLUÍDO`
 > Vercel como deploy principal, GitHub Pages descontinuado
 
 | # | Task | Status |
 |---|---|---|
-| 6.1 | Favicon + meta tags SEO (`<title>`, `og:title`, `og:description`) | `[ ]` |
-| 6.2 | Otimização de bundle — code splitting por rota com `React.lazy` | `[ ]` |
+| 6.1 | Favicon SVG personalizado + meta tags (`title`, `description`, OG, Twitter Card) | `[x]` |
+| 6.2 | Code splitting com `React.lazy` + `manualChunks` — bundle principal: 982 kB → 34 kB | `[x]` |
 | 6.3 | Domínio customizado no Vercel (opcional) | `[ ]` |
-| 6.4 | Desativar GitHub Pages (Settings → Pages → None) | `[ ]` |
-| 6.5 | Atualizar README com nova URL e instruções de dev local | `[ ]` |
+| 6.4 | Desativar GitHub Pages (Settings → Pages → None) — **ação manual do usuário** | `[ ]` |
+| 6.5 | README reescrito com stack, estrutura, dev local e instruções de deploy | `[x]` |
 
-**Entrega esperada:** URL canônica em produção, GitHub Pages desativado.
+**Commit:** `b753d78` · **Deploy:** https://bi-dashboard-red.vercel.app
 
 ---
 
-*Última atualização: 06/05/2026 — Épicos 0–5 concluídos, próximo: Épico 6*
+*Última atualização: 06/05/2026 — Épicos 0–6 concluídos. Projeto entregue. ✅*
