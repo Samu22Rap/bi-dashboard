@@ -8,7 +8,7 @@ export interface KpiResumo {
   valor: number
   unidade: string
   meta: number | null
-  status: 'ok' | 'error' | 'neutral'
+  status: 'ok' | 'alert' | 'neutral'
 }
 
 export interface ReceitaMensal {

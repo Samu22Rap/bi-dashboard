@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils'
 import { Card, CardContent } from '@/components/ui/card'
 
-type KpiVariant = 'ok' | 'error' | 'neutral'
+export type KpiVariant = 'ok' | 'alert' | 'error' | 'neutral'
 
 interface KpiCardProps {
   label: string
@@ -14,12 +14,18 @@ interface KpiCardProps {
 
 const variantStyles: Record<KpiVariant, { dot: string; delta: string }> = {
   ok:      { dot: 'bg-green-500',  delta: 'text-green-600' },
+  alert:   { dot: 'bg-red-500',    delta: 'text-red-600' },
   error:   { dot: 'bg-red-500',    delta: 'text-red-600' },
   neutral: { dot: 'bg-gray-300',   delta: 'text-gray-400' },
 }
 
+function safeVariant(v: string | undefined): KpiVariant {
+  if (v && v in variantStyles) return v as KpiVariant
+  return 'neutral'
+}
+
 export function KpiCard({ label, value, sublabel, delta, variant = 'neutral', className }: KpiCardProps) {
-  const styles = variantStyles[variant]
+  const styles = variantStyles[safeVariant(variant)]
 
   return (
     <Card className={cn('min-w-0', className)}>

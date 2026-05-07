@@ -7,7 +7,7 @@ import {
 import { useExecutivo } from '@/hooks/useExecutivo'
 import { LoadingState } from '@/components/shared/LoadingState'
 import { ErrorState } from '@/components/shared/ErrorState'
-import { KpiCard } from '@/components/shared/KpiCard'
+import { KpiCard, type KpiVariant } from '@/components/shared/KpiCard'
 import { KpiGrid } from '@/components/shared/KpiGrid'
 import { ChartCard } from '@/components/shared/ChartCard'
 import { FilterBar, FilterSelect } from '@/components/shared/FilterBar'
@@ -37,7 +37,7 @@ export default function Executivo() {
   const conversao    = kpiMap['taxa_conversao']
   const cac          = kpiMap['cac']
   const ticketMedio  = kpiMap['ticket_medio']
-  const pedidos      = kpiMap['pedidos_validos']
+  const pedidos      = kpiMap['pedidos']
   const sessoes      = kpiMap['sessoes']
   const roi          = kpiMap['roi_marketing']
   const investimento = kpiMap['investimento_marketing']
@@ -66,11 +66,11 @@ export default function Executivo() {
         <KpiCard label="Taxa de Conversao"    value={conversao    ? pct(conversao.valor)              : '—'}
           sublabel={`Meta: ${pct(META_CONVERSAO)}`}
           delta={conversao ? `${(conversao.valor - META_CONVERSAO).toFixed(2).replace('.', ',')} p.p. vs meta` : undefined}
-          variant={conversao?.status as 'ok' | 'error' | 'neutral' ?? 'neutral'} />
+          variant={(conversao?.status ?? 'neutral') as KpiVariant} />
         <KpiCard label="CAC"                  value={cac          ? brl(cac.valor)                   : '—'}
           sublabel={`Meta: ${cac?.meta ? brl(cac.meta) : 'R$ 113,46'}`}
           delta={cac?.meta ? `+${brl(cac.valor - cac.meta)} acima da meta` : undefined}
-          variant={cac?.status as 'ok' | 'error' | 'neutral' ?? 'neutral'} />
+          variant={(cac?.status ?? 'neutral') as KpiVariant} />
         <KpiCard label="Ticket Medio"         value={ticketMedio  ? brl(ticketMedio.valor)            : '—'} variant="ok" />
         <KpiCard label="ROI de Marketing"     value={roi          ? `${roi.valor.toFixed(2).replace('.', ',')}x` : '—'} variant="ok" />
       </KpiGrid>
