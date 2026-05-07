@@ -61,23 +61,24 @@
 
 ---
 
-## Épico 3 — Componentes de UI Reutilizáveis `[~] PRÓXIMO`
+## Épico 3 — Componentes de UI Reutilizáveis `[x] CONCLUÍDO`
 > Biblioteca interna antes de montar as páginas completas
 
 | # | Task | Status |
 |---|---|---|
-| 3.1 | `src/components/shared/KpiCard.tsx` — label, valor, delta, variante ok/err/neutral | `[ ]` |
-| 3.2 | `src/components/shared/KpiGrid.tsx` — grid 4 colunas responsivo | `[ ]` |
-| 3.3 | `src/components/shared/ChartCard.tsx` — Card com título + slot Recharts | `[ ]` |
-| 3.4 | `src/components/shared/FilterBar.tsx` — Select encapsulado + botão reset | `[ ]` |
-| 3.5 | `src/components/shared/DataTable.tsx` — Table genérico shadcn | `[ ]` |
-| 3.6 | `src/lib/colors.ts` — constante `CHART_COLORS[]` alinhada ao tema | `[ ]` |
-
-**Entrega esperada:** Todos os componentes renderizando isoladamente em suas páginas placeholder.
+| 3.1 | `src/components/shared/KpiCard.tsx` — label, valor, delta, variante ok/err/neutral | `[x]` |
+| 3.2 | `src/components/shared/KpiGrid.tsx` — grid responsivo 1→2→4 colunas | `[x]` |
+| 3.3 | `src/components/shared/ChartCard.tsx` — Card com título + slot altura configurável | `[x]` |
+| 3.4 | `src/components/shared/FilterBar.tsx` — FilterSelect + FilterBar com botão reset | `[x]` |
+| 3.5 | `src/components/shared/DataTable.tsx` — Table genérico com `ColumnDef<T>` tipado | `[x]` |
+| 3.6 | `src/lib/colors.ts` — `CHART_COLORS`, `CHART_PALETTE`, `SEMANTIC_COLORS` | `[x]` |
+| 3.7 | `src/components/ui/card.tsx` + `select.tsx` + `table.tsx` escritos manualmente | `[x]` |
+| 3.8 | Executivo.tsx atualizado: 8 KPIs reais + FilterBar + ChartCard + DataTable | `[x]` |
+| 3.9 | Build + commit + deploy | `[x]` |
 
 ---
 
-## Épico 4 — Páginas Completas `[ ]`
+## Épico 4 — Páginas Completas `[~] PRÓXIMO`
 > As 5 páginas com gráficos Recharts e dados reais do Supabase
 
 | # | Task | Gráficos | Status |
@@ -124,4 +125,4 @@
 
 ---
 
-*Última atualização: 06/05/2026 — Épicos 0, 1 e 2 concluídos, próximo: Épico 3*
+*Última atualização: 06/05/2026 — Épicos 0–3 concluídos, próximo: Épico 4*
