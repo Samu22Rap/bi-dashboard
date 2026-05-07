@@ -78,22 +78,20 @@
 
 ---
 
-## Épico 4 — Páginas Completas `[~] PRÓXIMO`
+## Épico 4 — Páginas Completas `[x] CONCLUÍDO`
 > As 5 páginas com gráficos Recharts e dados reais do Supabase
 
 | # | Task | Gráficos | Status |
 |---|---|---|---|
-| 4.1 | `Executivo.tsx` | ComposedChart (barras+linha+meta), RadialBarChart (gauge), BarChart pedidos | `[ ]` |
-| 4.2 | `Marketing.tsx` | BarChart horizontal CAC, BarChart ROI campanhas, ComposedChart dual-axis, DataTable | `[ ]` |
-| 4.3 | `Produtos.tsx` | BarChart receita, BarChart desconto, BarChart margem, ScatterChart ticket×volume | `[ ]` |
-| 4.4 | `Clientes.tsx` | BarChart por canal, PieChart donut renda, BarChart top UFs, BarChart score fidelidade | `[ ]` |
-| 4.5 | `Diagnostico.tsx` | FunnelChart, BarChart dispositivo, BarChart canal, BarChart agrupado, BarChart motivos, DataTable | `[ ]` |
-
-**Entrega esperada:** Dashboard visualmente equivalente ao HTML original.
+| 4.1 | `Executivo.tsx` | ComposedChart (receita+conversão+meta), RadialBarChart (gauge), BarChart pedidos | `[x]` |
+| 4.2 | `Marketing.tsx` | BarChart CAC (ok/erro vs meta), BarChart ROI, ComposedChart dual-axis, DataTable | `[x]` |
+| 4.3 | `Produtos.tsx` | BarChart receita, BarChart desconto (alerta >12%), BarChart margem, ScatterChart | `[x]` |
+| 4.4 | `Clientes.tsx` | BarChart canais, PieChart donut renda, BarChart top 12 UFs, BarChart score | `[x]` |
+| 4.5 | `Diagnostico.tsx` | FunnelChart, BarChart dispositivo, BarChart canal vs média, BarChart motivos, DataTable | `[x]` |
 
 ---
 
-## Épico 5 — Filtros e Interatividade `[ ]`
+## Épico 5 — Filtros e Interatividade `[~] PRÓXIMO`
 > Filtros por página re-renderizando gráficos via estado React + URL params
 
 | # | Task | Status |
@@ -125,4 +123,4 @@
 
 ---
 
-*Última atualização: 06/05/2026 — Épicos 0–3 concluídos, próximo: Épico 4*
+*Última atualização: 06/05/2026 — Épicos 0–4 concluídos, próximo: Épico 5*
