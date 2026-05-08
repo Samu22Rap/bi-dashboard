@@ -17,6 +17,15 @@ import type { RoiPorCampanha } from '@/types/database'
 
 const META_CAC = 113.46
 
+const MES_OPTIONS = [
+  { value: '1', label: 'Janeiro' },
+  { value: '2', label: 'Fevereiro' },
+  { value: '3', label: 'Março' },
+  { value: '4', label: 'Abril' },
+  { value: '5', label: 'Maio' },
+  { value: '6', label: 'Junho' },
+]
+
 const PLATAFORMA_OPTIONS = [
   { value: 'Meta Ads',   label: 'Meta Ads' },
   { value: 'Google Ads', label: 'Google Ads' },
@@ -46,55 +55,94 @@ const CAMPANHA_COLS = [
 
 export default function Marketing() {
   const { data, loading, error } = useMarketing()
-  const [filters, setFilter, resetFilters] = useFilters({ plataforma: 'all', canal: 'all' })
+  const [filters, setFilter, resetFilters] = useFilters({ mes: 'all', plataforma: 'all', canal: 'all' })
 
   if (loading) return <LoadingState />
   if (error)   return <ErrorState message={error} />
 
-  // Campanhas filtradas por plataforma (afeta gráfico ROI + tabela)
+  // Campanhas filtradas por plataforma (gráfico ROI + tabela)
   const campanhasFiltradas = data!.roi_por_campanha.filter((c) =>
     filters.plataforma === 'all' || c.plataforma === filters.plataforma
   )
 
-  // CAC por canal: filtrado por canal E por plataforma (canal == plataforma para canais pagos)
+  // CAC por canal: filtrado por canal e plataforma
   const canaisFiltrados = data!.cac_por_canal.filter((c) => {
     const okCanal = filters.canal      === 'all' || c.canal === filters.canal
     const okPlat  = filters.plataforma === 'all' || c.canal === filters.plataforma
     return okCanal && okPlat
   })
 
-  // KPIs unificados: investimento + clientes vêm de canaisFiltrados;
-  // ROI médio vem de campanhasFiltradas (tem filtro de plataforma)
-  const totalInvest   = canaisFiltrados.reduce((s, c) => s + c.investimento, 0)
-  const totalClientes = canaisFiltrados.reduce((s, c) => s + c.novos_clientes, 0)
-  const cacMedio      = totalClientes > 0 ? totalInvest / totalClientes : 0
-  const roiMedio      = campanhasFiltradas.length > 0
+  // Linha mensal filtrada pelo mês selecionado (para o gráfico mensal)
+  const receitaMensalFiltrada = filters.mes === 'all'
+    ? data!.receita_mensal
+    : data!.receita_mensal.filter((r) => String(r.mes_num) === filters.mes)
+
+  // Quando só o mês está ativo (sem plataforma/canal), derivar KPIs de receita_mensal
+  const mesRow = filters.mes !== 'all'
+    ? data!.receita_mensal.find((r) => String(r.mes_num) === filters.mes)
+    : null
+  const useMonthlyKpis = mesRow !== null && filters.plataforma === 'all' && filters.canal === 'all'
+
+  // KPIs: prioridade ao mês quando aplicável; senão usa dados de canal
+  const totalInvest = useMonthlyKpis
+    ? mesRow!.investimento_marketing
+    : canaisFiltrados.reduce((s, c) => s + c.investimento, 0)
+  const totalClientes = useMonthlyKpis
+    ? mesRow!.novos_clientes
+    : canaisFiltrados.reduce((s, c) => s + c.novos_clientes, 0)
+  const cacMedio = totalClientes > 0 ? totalInvest / totalClientes : 0
+  const roiMedio = useMonthlyKpis
+    // ROI proxy mensal: receita do mês / investimento de marketing do mês
+    ? (mesRow!.investimento_marketing > 0 ? mesRow!.receita / mesRow!.investimento_marketing : 0)
+    : campanhasFiltradas.length > 0
     ? campanhasFiltradas.reduce((s, c) => s + c.roi, 0) / campanhasFiltradas.length
     : 0
 
-  const hasActive = filters.plataforma !== 'all' || filters.canal !== 'all'
+  const mesLabel   = MES_OPTIONS.find((o) => o.value === filters.mes)?.label
+  const hasActive  = filters.mes !== 'all' || filters.plataforma !== 'all' || filters.canal !== 'all'
+  // Aviso em gráficos anuais quando mês está ativo
+  const avisoAnual = mesLabel ? `Dados anuais — mês não disponível por canal` : undefined
 
   return (
     <div className="space-y-6">
       <FilterBar onReset={resetFilters} hasActiveFilters={hasActive}>
+        <FilterSelect label="Mês"        value={filters.mes}        options={MES_OPTIONS}        onChange={(v) => setFilter('mes', v)} />
         <FilterSelect label="Plataforma" value={filters.plataforma} options={PLATAFORMA_OPTIONS} onChange={(v) => setFilter('plataforma', v)} />
         <FilterSelect label="Canal"      value={filters.canal}      options={CANAL_OPTIONS}      onChange={(v) => setFilter('canal', v)} />
       </FilterBar>
 
       {/* KPIs */}
       <KpiGrid cols={4}>
-        <KpiCard label="Investimento Total" value={brl(totalInvest)}       variant="neutral" />
-        <KpiCard label="ROI Consolidado"    value={roiFmt(roiMedio)}       variant="ok"      sublabel="Média das campanhas" />
-        <KpiCard label="CAC Médio"          value={brl(cacMedio)}
+        <KpiCard
+          label="Investimento Total"
+          value={brl(totalInvest)}
+          sublabel={mesLabel ?? undefined}
+          variant="neutral" />
+        <KpiCard
+          label="ROI Consolidado"
+          value={roiFmt(roiMedio)}
+          sublabel={useMonthlyKpis ? `Proxy: receita/invest. ${mesLabel}` : 'Média das campanhas'}
+          variant="ok" />
+        <KpiCard
+          label="CAC Médio"
+          value={brl(cacMedio)}
           sublabel={`Meta: ${brl(META_CAC)}`}
           delta={cacMedio > 0 ? `${cacMedio <= META_CAC ? '-' : '+'}${brl(Math.abs(cacMedio - META_CAC))} vs meta` : undefined}
           variant={cacMedio <= META_CAC ? 'ok' : 'alert'} />
-        <KpiCard label="Novos Clientes"     value={integer(totalClientes)} variant="neutral" />
+        <KpiCard
+          label="Novos Clientes"
+          value={integer(totalClientes)}
+          sublabel={mesLabel ?? undefined}
+          variant="neutral" />
       </KpiGrid>
 
       {/* Gráficos linha 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ChartCard title="CAC por Canal" description={`Meta: ${brl(META_CAC)} — verde = abaixo, vermelho = acima`} height={260}>
+        <ChartCard
+          title="CAC por Canal"
+          description={avisoAnual ?? `Meta: ${brl(META_CAC)} — verde = abaixo, vermelho = acima`}
+          height={260}
+        >
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={canaisFiltrados} layout="vertical" margin={{ top: 4, right: 48, left: 8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
@@ -112,7 +160,11 @@ export default function Marketing() {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="ROI por Campanha" description="Top campanhas por retorno" height={260}>
+        <ChartCard
+          title="ROI por Campanha"
+          description={avisoAnual ?? 'Top campanhas por retorno'}
+          height={260}
+        >
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={campanhasFiltradas.slice(0, 8)} layout="vertical" margin={{ top: 4, right: 32, left: 8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
@@ -125,10 +177,14 @@ export default function Marketing() {
         </ChartCard>
       </div>
 
-      {/* Gráfico linha 2 */}
-      <ChartCard title="Investimento vs Novos Clientes por Mês" description="Barras = investimento (R$) · Linha = novos clientes" height={240}>
+      {/* Gráfico linha 2 — filtra pelo mês selecionado */}
+      <ChartCard
+        title="Investimento vs Novos Clientes por Mês"
+        description={mesLabel ? `Exibindo: ${mesLabel}` : 'Barras = investimento (R$) · Linha = novos clientes'}
+        height={240}
+      >
         <ResponsiveContainer width="100%" height="100%">
-          <ComposedChart data={data!.receita_mensal} margin={{ top: 4, right: 32, left: 0, bottom: 0 }}>
+          <ComposedChart data={receitaMensalFiltrada} margin={{ top: 4, right: 32, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
             <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
             <YAxis yAxisId="left"  tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}K`} tick={{ fontSize: 11 }} width={52} />
@@ -141,7 +197,7 @@ export default function Marketing() {
       </ChartCard>
 
       {/* Tabela */}
-      <ChartCard title="Detalhe de Campanhas" description={`${campanhasFiltradas.length} campanha(s)`}>
+      <ChartCard title="Detalhe de Campanhas" description={`${campanhasFiltradas.length} campanha(s)${mesLabel ? ` · Campanhas são anuais` : ''}`}>
         <DataTable columns={CAMPANHA_COLS} data={campanhasFiltradas} />
       </ChartCard>
     </div>
