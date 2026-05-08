@@ -58,15 +58,15 @@ export default function Diagnostico() {
   // Funil agregado (todos dispositivos visíveis)
   const funilAgregado = funilFiltrado.reduce(
     (acc, d) => ({
-      Sessoes:      acc.Sessoes + d.sessoes,
-      'Add to Cart': acc['Add to Cart'] + d.add_to_cart,
-      Checkout:     acc.Checkout + d.checkout,
-      Pedidos:      acc.Pedidos + d.pedidos,
+      'Sessões':     acc['Sessões']     + (d.sessoes      || 0),
+      'Add to Cart': acc['Add to Cart'] + (d.add_to_cart  || 0),
+      'Checkout':    acc['Checkout']    + (d.checkout     || 0),
+      'Pedidos':     acc['Pedidos']     + (d.pedidos      || 0),
     }),
-    { Sessoes: 0, 'Add to Cart': 0, Checkout: 0, Pedidos: 0 }
+    { 'Sessões': 0, 'Add to Cart': 0, 'Checkout': 0, 'Pedidos': 0 }
   )
   const funilData = Object.entries(funilAgregado).map(([name, value], i) => ({
-    name, value, fill: CHART_PALETTE[i % CHART_PALETTE.length],
+    name, value: value || 0, fill: CHART_PALETTE[i % CHART_PALETTE.length],
   }))
 
   // KPIs
@@ -99,8 +99,17 @@ export default function Diagnostico() {
             <FunnelChart>
               <Tooltip formatter={(v) => integer(Number(v))} />
               <Funnel dataKey="value" data={funilData} isAnimationActive>
-                <LabelList position="center" fill="#fff" fontSize={12} fontWeight={600}
-                  formatter={(v: unknown) => integer(Number(v))} />
+                <LabelList
+                  dataKey="value"
+                  position="center"
+                  fill="#fff"
+                  fontSize={12}
+                  fontWeight={600}
+                  formatter={(v: unknown) => {
+                    const n = Number(v)
+                    return isNaN(n) || n === 0 ? '' : integer(n)
+                  }}
+                />
               </Funnel>
             </FunnelChart>
           </ResponsiveContainer>

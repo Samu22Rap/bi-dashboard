@@ -10,7 +10,7 @@ import { KpiCard } from '@/components/shared/KpiCard'
 import { KpiGrid } from '@/components/shared/KpiGrid'
 import { ChartCard } from '@/components/shared/ChartCard'
 import { FilterBar, FilterSelect } from '@/components/shared/FilterBar'
-import { integer, pct } from '@/lib/formatters'
+import { brl, integer, pct } from '@/lib/formatters'
 import { CHART_COLORS, CHART_PALETTE, SEMANTIC_COLORS } from '@/lib/colors'
 
 const META_SCORE = 60
@@ -83,25 +83,38 @@ export default function Clientes() {
         </ChartCard>
 
         <ChartCard title="Distribuicao por Faixa de Renda" height={260}>
-          <ResponsiveContainer width="100%" height="100%">
-            <PieChart>
-              <Pie
-                data={rendasFiltradas}
-                dataKey="total_clientes"
-                nameKey="faixa"
-                cx="50%" cy="50%"
-                innerRadius="45%" outerRadius="75%"
-                paddingAngle={3}
-                label={({ name, percent }) => `${name}: ${pct((percent ?? 0) * 100, 1)}`}
-                labelLine={false}
-              >
-                {rendasFiltradas.map((_, i) => (
-                  <Cell key={i} fill={CHART_PALETTE[i % CHART_PALETTE.length]} />
-                ))}
-              </Pie>
-              <Tooltip formatter={(v, name) => [integer(Number(v)), name]} />
-            </PieChart>
-          </ResponsiveContainer>
+          {rendasFiltradas.length > 1 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={rendasFiltradas}
+                  dataKey="total_clientes"
+                  nameKey="faixa"
+                  cx="50%" cy="50%"
+                  innerRadius="45%" outerRadius="75%"
+                  paddingAngle={3}
+                  label={({ name, percent }) => `${name}: ${pct((percent ?? 0) * 100, 1)}`}
+                  labelLine={false}
+                >
+                  {rendasFiltradas.map((_, i) => (
+                    <Cell key={i} fill={CHART_PALETTE[i % CHART_PALETTE.length]} />
+                  ))}
+                </Pie>
+                <Tooltip formatter={(v, name) => [integer(Number(v)), name]} />
+              </PieChart>
+            </ResponsiveContainer>
+          ) : rendasFiltradas.length === 1 ? (
+            <div className="flex h-full flex-col items-center justify-center gap-2 text-center">
+              <p className="text-2xl font-bold text-gray-800">{integer(rendasFiltradas[0].total_clientes)}</p>
+              <p className="text-sm text-gray-500">{rendasFiltradas[0].faixa}</p>
+              <p className="text-xs text-gray-400">Ticket médio: {brl(rendasFiltradas[0].ticket_medio)}</p>
+              <p className="mt-1 text-[11px] text-gray-300">Selecione "Todos" para ver a distribuição</p>
+            </div>
+          ) : (
+            <div className="flex h-full items-center justify-center text-sm text-gray-400">
+              Nenhum dado para a faixa selecionada
+            </div>
+          )}
         </ChartCard>
       </div>
 
