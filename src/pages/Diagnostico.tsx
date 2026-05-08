@@ -69,25 +69,44 @@ export default function Diagnostico() {
     name, value: value || 0, fill: CHART_PALETTE[i % CHART_PALETTE.length],
   }))
 
-  // KPIs
-  const mobile      = funil.find((d) => d.dispositivo === 'Mobile')
-  const desktop     = funil.find((d) => d.dispositivo === 'Desktop')
-  const convMobile  = mobile  ? (mobile.pedidos  / mobile.sessoes)  * 100 : 0
-  const convDesktop = desktop ? (desktop.pedidos / desktop.sessoes) * 100 : 0
+  // KPIs — respeitam o filtro de dispositivo
+  const disp = filters.dispositivo
+  const mobileData  = disp === 'all' || disp === 'Mobile'
+    ? (disp === 'Mobile' ? funilFiltrado[0] : funil.find((d) => d.dispositivo === 'Mobile'))
+    : null
+  const desktopData = disp === 'all' || disp === 'Desktop'
+    ? (disp === 'Desktop' ? funilFiltrado[0] : funil.find((d) => d.dispositivo === 'Desktop'))
+    : null
+
+  const convMobile  = mobileData  ? (mobileData.pedidos  / mobileData.sessoes)  * 100 : null
+  const convDesktop = desktopData ? (desktopData.pedidos / desktopData.sessoes) * 100 : null
+
   const totalTickets    = motivos.reduce((s, m) => s + m.quantidade, 0)
   const principalMotivo = motivos[0]?.motivo ?? '—'
 
+  const hasActive = disp !== 'all' || filters.canal !== 'all'
+
   return (
     <div className="space-y-6">
-      <FilterBar onReset={resetFilters}>
-        <FilterSelect label="Dispositivo" value={filters.dispositivo} options={DISPOSITIVO_OPTIONS} onChange={(v) => setFilter('dispositivo', v)} />
-        <FilterSelect label="Canal"       value={filters.canal}       options={CANAL_OPTIONS}       onChange={(v) => setFilter('canal', v)} />
+      <FilterBar onReset={resetFilters} hasActiveFilters={hasActive}>
+        <FilterSelect label="Dispositivo" value={disp}          options={DISPOSITIVO_OPTIONS} onChange={(v) => setFilter('dispositivo', v)} />
+        <FilterSelect label="Canal"       value={filters.canal} options={CANAL_OPTIONS}       onChange={(v) => setFilter('canal', v)} />
       </FilterBar>
 
       {/* KPIs */}
       <KpiGrid cols={4}>
-        <KpiCard label="Conversao Mobile"   value={pct(convMobile)}       variant={convMobile  >= MEDIA_CONVERSAO ? 'ok' : 'alert'} sublabel={`Media: ${pct(MEDIA_CONVERSAO)}`} />
-        <KpiCard label="Conversao Desktop"  value={pct(convDesktop)}      variant={convDesktop >= MEDIA_CONVERSAO ? 'ok' : 'alert'} sublabel={`Media: ${pct(MEDIA_CONVERSAO)}`} />
+        <KpiCard
+          label="Conversão Mobile"
+          value={convMobile !== null ? pct(convMobile) : '—'}
+          variant={convMobile !== null ? (convMobile >= MEDIA_CONVERSAO ? 'ok' : 'alert') : 'neutral'}
+          sublabel={`Média: ${pct(MEDIA_CONVERSAO)}`}
+        />
+        <KpiCard
+          label="Conversão Desktop"
+          value={convDesktop !== null ? pct(convDesktop) : '—'}
+          variant={convDesktop !== null ? (convDesktop >= MEDIA_CONVERSAO ? 'ok' : 'alert') : 'neutral'}
+          sublabel={`Média: ${pct(MEDIA_CONVERSAO)}`}
+        />
         <KpiCard label="Tickets de Suporte" value={integer(totalTickets)} variant="neutral" />
         <KpiCard label="Principal Motivo"   value={principalMotivo}       variant="alert" sublabel={`${pct(motivos[0]?.percentual ?? 0)} dos tickets`} />
       </KpiGrid>

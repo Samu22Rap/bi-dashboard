@@ -29,7 +29,7 @@ const CANAL_OPTIONS = [
   { value: 'Meta Ads',        label: 'Meta Ads' },
   { value: 'Google Ads',      label: 'Google Ads' },
   { value: 'E-mail',          label: 'E-mail' },
-  { value: 'Busca Organica',  label: 'Busca Organica' },
+  { value: 'Busca Orgânica',  label: 'Busca Orgânica' },
   { value: 'Direto',          label: 'Direto' },
   { value: 'TikTok Ads',      label: 'TikTok Ads' },
 ]
@@ -51,28 +51,32 @@ export default function Marketing() {
   if (loading) return <LoadingState />
   if (error)   return <ErrorState message={error} />
 
-  // Filtros combinados sobre campanhas
-  const campanhasFiltradas = data!.roi_por_campanha.filter((c) => {
-    const okPlat  = filters.plataforma === 'all' || c.plataforma === filters.plataforma
-    return okPlat
-  })
-
-  // Filtro de canal sobre cac_por_canal
-  const canaisFiltrados = data!.cac_por_canal.filter((c) =>
-    filters.canal === 'all' || c.canal === filters.canal
+  // Campanhas filtradas por plataforma (afeta gráfico ROI + tabela)
+  const campanhasFiltradas = data!.roi_por_campanha.filter((c) =>
+    filters.plataforma === 'all' || c.plataforma === filters.plataforma
   )
 
-  // KPIs agregados (sobre canais filtrados)
+  // CAC por canal: filtrado por canal E por plataforma (canal == plataforma para canais pagos)
+  const canaisFiltrados = data!.cac_por_canal.filter((c) => {
+    const okCanal = filters.canal      === 'all' || c.canal === filters.canal
+    const okPlat  = filters.plataforma === 'all' || c.canal === filters.plataforma
+    return okCanal && okPlat
+  })
+
+  // KPIs unificados: investimento + clientes vêm de canaisFiltrados;
+  // ROI médio vem de campanhasFiltradas (tem filtro de plataforma)
   const totalInvest   = canaisFiltrados.reduce((s, c) => s + c.investimento, 0)
   const totalClientes = canaisFiltrados.reduce((s, c) => s + c.novos_clientes, 0)
   const cacMedio      = totalClientes > 0 ? totalInvest / totalClientes : 0
-  const roiMedio      = canaisFiltrados.length > 0
-    ? canaisFiltrados.reduce((s, c) => s + c.roi, 0) / canaisFiltrados.length
+  const roiMedio      = campanhasFiltradas.length > 0
+    ? campanhasFiltradas.reduce((s, c) => s + c.roi, 0) / campanhasFiltradas.length
     : 0
+
+  const hasActive = filters.plataforma !== 'all' || filters.canal !== 'all'
 
   return (
     <div className="space-y-6">
-      <FilterBar onReset={resetFilters}>
+      <FilterBar onReset={resetFilters} hasActiveFilters={hasActive}>
         <FilterSelect label="Plataforma" value={filters.plataforma} options={PLATAFORMA_OPTIONS} onChange={(v) => setFilter('plataforma', v)} />
         <FilterSelect label="Canal"      value={filters.canal}      options={CANAL_OPTIONS}      onChange={(v) => setFilter('canal', v)} />
       </FilterBar>
@@ -80,11 +84,11 @@ export default function Marketing() {
       {/* KPIs */}
       <KpiGrid cols={4}>
         <KpiCard label="Investimento Total" value={brl(totalInvest)}       variant="neutral" />
-        <KpiCard label="ROI Consolidado"    value={roiFmt(roiMedio)}       variant="ok"      sublabel="Media dos canais" />
-        <KpiCard label="CAC Medio"          value={brl(cacMedio)}
+        <KpiCard label="ROI Consolidado"    value={roiFmt(roiMedio)}       variant="ok"      sublabel="Média das campanhas" />
+        <KpiCard label="CAC Médio"          value={brl(cacMedio)}
           sublabel={`Meta: ${brl(META_CAC)}`}
-          delta={cacMedio > 0 ? `+${brl(cacMedio - META_CAC)} acima da meta` : undefined}
-          variant="alert" />
+          delta={cacMedio > 0 ? `${cacMedio <= META_CAC ? '-' : '+'}${brl(Math.abs(cacMedio - META_CAC))} vs meta` : undefined}
+          variant={cacMedio <= META_CAC ? 'ok' : 'alert'} />
         <KpiCard label="Novos Clientes"     value={integer(totalClientes)} variant="neutral" />
       </KpiGrid>
 
@@ -122,7 +126,7 @@ export default function Marketing() {
       </div>
 
       {/* Gráfico linha 2 */}
-      <ChartCard title="Investimento vs Novos Clientes por Mes" description="Barras = investimento (R$) · Linha = novos clientes" height={240}>
+      <ChartCard title="Investimento vs Novos Clientes por Mês" description="Barras = investimento (R$) · Linha = novos clientes" height={240}>
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data!.receita_mensal} margin={{ top: 4, right: 32, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

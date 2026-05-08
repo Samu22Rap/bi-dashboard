@@ -47,16 +47,23 @@ export default function Clientes() {
   )
   const ufs = data!.clientes_por_uf.slice(0, 12)
 
-  // KPIs (sobre canais filtrados)
-  const totalCadastrados = canaisFiltrados.reduce((s, c) => s + c.total_clientes, 0)
+  // KPIs: canal tem precedência; se só renda estiver ativa, usa rendasFiltradas
+  const totalCadastrados = filters.canal !== 'all'
+    ? canaisFiltrados.reduce((s, c) => s + c.total_clientes, 0)
+    : filters.renda !== 'all'
+    ? rendasFiltradas.reduce((s, r) => s + r.total_clientes, 0)
+    : data!.clientes_por_canal.reduce((s, c) => s + c.total_clientes, 0)
+
   const totalCompradores = Math.round(totalCadastrados * 0.78)
   const taxaAtivacao     = totalCadastrados > 0 ? (totalCompradores / totalCadastrados) * 100 : 0
   const semEmail         = Math.round(totalCadastrados * 0.054)
 
+  const hasActive = filters.canal !== 'all' || filters.renda !== 'all'
+
   return (
     <div className="space-y-6">
-      <FilterBar onReset={resetFilters}>
-        <FilterSelect label="Canal de Aquisicao" value={filters.canal} options={CANAL_OPTIONS} onChange={(v) => setFilter('canal', v)} />
+      <FilterBar onReset={resetFilters} hasActiveFilters={hasActive}>
+        <FilterSelect label="Canal de Aquisição" value={filters.canal} options={CANAL_OPTIONS} onChange={(v) => setFilter('canal', v)} />
         <FilterSelect label="Faixa de Renda"     value={filters.renda} options={RENDA_OPTIONS} onChange={(v) => setFilter('renda', v)} />
       </FilterBar>
 

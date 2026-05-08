@@ -17,13 +17,14 @@ import { CHART_COLORS, SEMANTIC_COLORS } from '@/lib/colors'
 const MES_OPTIONS = [
   { value: '1', label: 'Janeiro' },
   { value: '2', label: 'Fevereiro' },
-  { value: '3', label: 'Marco' },
+  { value: '3', label: 'Março' },
   { value: '4', label: 'Abril' },
   { value: '5', label: 'Maio' },
   { value: '6', label: 'Junho' },
 ]
 
 const META_CONVERSAO = 3.06
+const META_CAC       = 113.46
 
 export default function Executivo() {
   const { data, loading, error } = useExecutivo()
@@ -34,54 +35,83 @@ export default function Executivo() {
   if (error)   return <ErrorState message={error} />
 
   const kpiMap = Object.fromEntries(data!.kpis.map((k) => [k.indicador, k]))
-  const receita      = kpiMap['receita_total']
-  const conversao    = kpiMap['taxa_conversao']
-  const cac          = kpiMap['cac']
-  const ticketMedio  = kpiMap['ticket_medio']
-  const pedidos      = kpiMap['pedidos']
-  const sessoes      = kpiMap['sessoes']
-  const roi          = kpiMap['roi_marketing']
-  const investimento = kpiMap['investimento_marketing']
+  const kpiConversaoBase = kpiMap['taxa_conversao']
+  const kpiCacBase       = kpiMap['cac']
+  const kpiRoiBase       = kpiMap['roi_marketing']
 
   const receitaFiltrada = mes === 'all'
     ? data!.receita_mensal
     : data!.receita_mensal.filter((r) => String(r.mes_num) === mes)
 
-  // Gauge de conversão
-  const gaugeData = [{ name: 'Conversao', value: conversao?.valor ?? 0, fill: SEMANTIC_COLORS.error }]
-  const gaugeMeta = [{ name: 'Meta', value: META_CONVERSAO, fill: SEMANTIC_COLORS.meta }]
+  // Quando um mês específico é selecionado, derivar KPIs da linha mensal
+  const mesRow = mes !== 'all'
+    ? data!.receita_mensal.find((r) => String(r.mes_num) === mes)
+    : null
+
+  const kpiReceita   = mesRow ? mesRow.receita                   : kpiMap['receita_total']?.valor       ?? 0
+  const kpiPedidos   = mesRow ? mesRow.pedidos                   : kpiMap['pedidos']?.valor             ?? 0
+  const kpiSessoes   = mesRow ? mesRow.sessoes                   : kpiMap['sessoes']?.valor             ?? 0
+  const kpiInvest    = mesRow ? mesRow.investimento_marketing    : kpiMap['investimento_marketing']?.valor ?? 0
+  const kpiConversao = mesRow ? mesRow.taxa_conversao            : kpiConversaoBase?.valor              ?? 0
+  const kpiCac       = mesRow
+    ? (mesRow.novos_clientes > 0 ? mesRow.investimento_marketing / mesRow.novos_clientes : 0)
+    : kpiCacBase?.valor ?? 0
+  const kpiTicket    = mesRow ? mesRow.ticket_medio              : kpiMap['ticket_medio']?.valor        ?? 0
+  const kpiRoi       = kpiRoiBase?.valor ?? 0   // ROI não tem granularidade mensal
+
+  const mesLabel = MES_OPTIONS.find((o) => o.value === mes)?.label ?? 'Jan–Jun 2025'
+
+  // Gauge usa o valor mensal quando filtrado
+  const gaugeData = [{ name: 'Conversão', value: kpiConversao, fill: SEMANTIC_COLORS.error }]
+  const gaugeMeta = [{ name: 'Meta',      value: META_CONVERSAO, fill: SEMANTIC_COLORS.meta }]
 
   return (
     <div className="space-y-6">
       {/* Filtros */}
-      <FilterBar onReset={resetFilters}>
-        <FilterSelect label="Mes" value={mes} options={MES_OPTIONS} onChange={(v) => setFilter('mes', v)} />
+      <FilterBar onReset={resetFilters} hasActiveFilters={mes !== 'all'}>
+        <FilterSelect label="Mês" value={mes} options={MES_OPTIONS} onChange={(v) => setFilter('mes', v)} />
       </FilterBar>
 
       {/* KPIs */}
       <KpiGrid cols={4}>
-        <KpiCard label="Receita Total"        value={receita      ? brl(receita.valor)               : '—'} sublabel="Jan–Jun 2025" variant="neutral" />
-        <KpiCard label="Pedidos Validos"      value={pedidos      ? integer(pedidos.valor)            : '—'} variant="neutral" />
-        <KpiCard label="Sessoes no Site"      value={sessoes      ? integer(sessoes.valor)            : '—'} variant="neutral" />
-        <KpiCard label="Invest. Marketing"    value={investimento ? brl(investimento.valor)           : '—'} variant="neutral" />
-        <KpiCard label="Taxa de Conversao"    value={conversao    ? pct(conversao.valor)              : '—'}
+        <KpiCard label="Receita Total"
+          value={brl(kpiReceita)}
+          sublabel={mesLabel}
+          variant="neutral" />
+        <KpiCard label="Pedidos Válidos"
+          value={integer(kpiPedidos)}
+          variant="neutral" />
+        <KpiCard label="Sessões no Site"
+          value={integer(kpiSessoes)}
+          variant="neutral" />
+        <KpiCard label="Invest. Marketing"
+          value={brl(kpiInvest)}
+          variant="neutral" />
+        <KpiCard label="Taxa de Conversão"
+          value={pct(kpiConversao)}
           sublabel={`Meta: ${pct(META_CONVERSAO)}`}
-          delta={conversao ? `${(conversao.valor - META_CONVERSAO).toFixed(2).replace('.', ',')} p.p. vs meta` : undefined}
-          variant={(conversao?.status ?? 'neutral') as KpiVariant} />
-        <KpiCard label="CAC"                  value={cac          ? brl(cac.valor)                   : '—'}
-          sublabel={`Meta: ${cac?.meta ? brl(cac.meta) : 'R$ 113,46'}`}
-          delta={cac?.meta ? `+${brl(cac.valor - cac.meta)} acima da meta` : undefined}
-          variant={(cac?.status ?? 'neutral') as KpiVariant} />
-        <KpiCard label="Ticket Medio"         value={ticketMedio  ? brl(ticketMedio.valor)            : '—'} variant="ok" />
-        <KpiCard label="ROI de Marketing"     value={roi          ? `${roi.valor.toFixed(2).replace('.', ',')}x` : '—'} variant="ok" />
+          delta={`${(kpiConversao - META_CONVERSAO).toFixed(2).replace('.', ',')} p.p. vs meta`}
+          variant={kpiConversao >= META_CONVERSAO ? 'ok' : 'alert'} />
+        <KpiCard label="CAC"
+          value={brl(kpiCac)}
+          sublabel={`Meta: ${brl(META_CAC)}`}
+          delta={kpiCac > 0 ? `${kpiCac <= META_CAC ? '-' : '+'}${brl(Math.abs(kpiCac - META_CAC))} vs meta` : undefined}
+          variant={(kpiCacBase?.status ?? 'neutral') as KpiVariant} />
+        <KpiCard label="Ticket Médio"
+          value={brl(kpiTicket)}
+          variant="ok" />
+        <KpiCard label="ROI de Marketing"
+          value={`${kpiRoi.toFixed(2).replace('.', ',')}x`}
+          sublabel={mesRow ? 'Dado anual (sem granularidade mensal)' : undefined}
+          variant="ok" />
       </KpiGrid>
 
       {/* Gráficos — linha 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Receita + Conversão — ocupa 2/3 */}
         <ChartCard
-          title="Receita Mensal e Taxa de Conversao"
-          description="Barras = receita (R$) · Linha = conversao (%) · Tracejado = meta 3,06%"
+          title="Receita Mensal e Taxa de Conversão"
+          description="Barras = receita (R$) · Linha = conversão (%) · Tracejado = meta 3,06%"
           height={280}
           className="lg:col-span-2"
         >
@@ -98,13 +128,17 @@ export default function Executivo() {
               />
               <ReferenceLine yAxisId="right" y={META_CONVERSAO} stroke={SEMANTIC_COLORS.meta} strokeDasharray="4 4" label={{ value: 'Meta', position: 'right', fontSize: 10, fill: SEMANTIC_COLORS.meta }} />
               <Bar yAxisId="left" dataKey="receita" name="Receita" fill={CHART_COLORS.blue} radius={[3, 3, 0, 0]} />
-              <Line yAxisId="right" type="monotone" dataKey="taxa_conversao" name="Conversao" stroke={SEMANTIC_COLORS.ok} strokeWidth={2} dot={{ r: 3 }} />
+              <Line yAxisId="right" type="monotone" dataKey="taxa_conversao" name="Conversão" stroke={SEMANTIC_COLORS.ok} strokeWidth={2} dot={{ r: 3 }} />
             </ComposedChart>
           </ResponsiveContainer>
         </ChartCard>
 
         {/* Gauge de conversão — ocupa 1/3 */}
-        <ChartCard title="Conversao Atual vs Meta" description={`Atual: ${pct(conversao?.valor ?? 0)} · Meta: ${pct(META_CONVERSAO)}`} height={280}>
+        <ChartCard
+          title="Conversão Atual vs Meta"
+          description={`Atual: ${pct(kpiConversao)} · Meta: ${pct(META_CONVERSAO)}`}
+          height={280}
+        >
           <ResponsiveContainer width="100%" height="100%">
             <RadialBarChart
               cx="50%" cy="55%"
@@ -124,7 +158,7 @@ export default function Executivo() {
       </div>
 
       {/* Gráficos — linha 2 */}
-      <ChartCard title="Pedidos por Mes" description="Volume de pedidos validos" height={220}>
+      <ChartCard title="Pedidos por Mês" description="Volume de pedidos válidos" height={220}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={receitaFiltrada} margin={{ top: 4, right: 16, left: 0, bottom: 0 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />

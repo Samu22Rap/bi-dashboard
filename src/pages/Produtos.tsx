@@ -29,24 +29,29 @@ export default function Produtos() {
 
   const filtradas = categoria === 'all' ? cats : cats.filter((c) => c.categoria === categoria)
 
-  // KPIs agregados
-  const receitaTotal   = cats.reduce((s, c) => s + c.receita, 0)
-  const pedidosTotal   = cats.reduce((s, c) => s + c.pedidos, 0)
-  const ticketMedio    = receitaTotal / pedidosTotal
-  const skusAtivos     = cats.length
+  // KPIs calculados sobre os dados filtrados
+  const receitaTotal = filtradas.reduce((s, c) => s + c.receita, 0)
+  const pedidosTotal = filtradas.reduce((s, c) => s + c.pedidos, 0)
+  const ticketMedio  = pedidosTotal > 0 ? receitaTotal / pedidosTotal : 0
+  const skusAtivos   = filtradas.length
+
+  const hasActive = categoria !== 'all'
 
   return (
     <div className="space-y-6">
-      <FilterBar onReset={resetFilters}>
+      <FilterBar onReset={resetFilters} hasActiveFilters={hasActive}>
         <FilterSelect label="Categoria" value={categoria} options={catOptions} onChange={(v) => setFilter('categoria', v)} />
       </FilterBar>
 
       {/* KPIs */}
       <KpiGrid cols={4}>
-        <KpiCard label="Receita Total"    value={brl(receitaTotal)}     variant="neutral" sublabel="Todas as categorias" />
-        <KpiCard label="Itens Vendidos"   value={integer(pedidosTotal)} variant="neutral" />
-        <KpiCard label="Ticket Medio"     value={brl(ticketMedio)}      variant="ok" />
-        <KpiCard label="Categorias Ativas" value={String(skusAtivos)}   variant="neutral" />
+        <KpiCard label="Receita Total"
+          value={brl(receitaTotal)}
+          sublabel={hasActive ? categoria : 'Todas as categorias'}
+          variant="neutral" />
+        <KpiCard label="Itens Vendidos"    value={integer(pedidosTotal)} variant="neutral" />
+        <KpiCard label="Ticket Médio"      value={brl(ticketMedio)}      variant="ok" />
+        <KpiCard label="Categorias Ativas" value={String(skusAtivos)}    variant="neutral" />
       </KpiGrid>
 
       {/* Linha 1 */}
