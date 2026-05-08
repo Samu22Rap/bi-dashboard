@@ -1,8 +1,8 @@
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, ReferenceLine, RadialBarChart, RadialBar,
-  Legend, BarChart,
+  ResponsiveContainer, ReferenceLine, BarChart, LabelList,
 } from 'recharts'
+import { ConversionGauge } from '@/components/shared/ConversionGauge'
 import { useExecutivo } from '@/hooks/useExecutivo'
 import { LoadingState } from '@/components/shared/LoadingState'
 import { ErrorState } from '@/components/shared/ErrorState'
@@ -60,10 +60,6 @@ export default function Executivo() {
   const kpiRoi       = kpiRoiBase?.valor ?? 0   // ROI não tem granularidade mensal
 
   const mesLabel = MES_OPTIONS.find((o) => o.value === mes)?.label ?? 'Jan–Jun 2025'
-
-  // Gauge usa o valor mensal quando filtrado
-  const gaugeData = [{ name: 'Conversão', value: kpiConversao, fill: SEMANTIC_COLORS.error }]
-  const gaugeMeta = [{ name: 'Meta',      value: META_CONVERSAO, fill: SEMANTIC_COLORS.meta }]
 
   return (
     <div className="space-y-6">
@@ -134,26 +130,12 @@ export default function Executivo() {
         </ChartCard>
 
         {/* Gauge de conversão — ocupa 1/3 */}
-        <ChartCard
-          title="Conversão Atual vs Meta"
-          description={`Atual: ${pct(kpiConversao)} · Meta: ${pct(META_CONVERSAO)}`}
-          height={280}
-        >
-          <ResponsiveContainer width="100%" height="100%">
-            <RadialBarChart
-              cx="50%" cy="55%"
-              innerRadius="50%" outerRadius="85%"
-              data={[...gaugeMeta, ...gaugeData]}
-              startAngle={180} endAngle={0}
-            >
-              <RadialBar dataKey="value" cornerRadius={4} />
-              <Legend
-                iconSize={10}
-                formatter={(v) => <span style={{ fontSize: 11 }}>{v}</span>}
-              />
-              <Tooltip formatter={(v) => pct(Number(v))} />
-            </RadialBarChart>
-          </ResponsiveContainer>
+        <ChartCard title="Conversão Atual vs Meta" height={280}>
+          <ConversionGauge
+            value={kpiConversao}
+            meta={META_CONVERSAO}
+            label={mesLabel !== 'Jan–Jun 2025' ? mesLabel : 'Jan–Jun 2025'}
+          />
         </ChartCard>
       </div>
 
@@ -165,7 +147,10 @@ export default function Executivo() {
             <XAxis dataKey="mes" tick={{ fontSize: 11 }} />
             <YAxis tick={{ fontSize: 11 }} width={40} />
             <Tooltip formatter={(v) => integer(Number(v))} />
-            <Bar dataKey="pedidos" name="Pedidos" fill={CHART_COLORS.green} radius={[3, 3, 0, 0]} />
+            <Bar dataKey="pedidos" name="Pedidos" fill={CHART_COLORS.green} radius={[3, 3, 0, 0]}>
+              <LabelList dataKey="pedidos" position="top" style={{ fontSize: 10, fill: '#6b7280' }}
+                formatter={(v: unknown) => integer(Number(v))} />
+            </Bar>
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>

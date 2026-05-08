@@ -1,6 +1,6 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, Cell, PieChart, Pie,
+  ResponsiveContainer, Cell, PieChart, Pie, LabelList,
 } from 'recharts'
 import { useClientes } from '@/hooks/useClientes'
 import { useFilters } from '@/hooks/useFilters'
@@ -84,7 +84,10 @@ export default function Clientes() {
               <XAxis type="number" tick={{ fontSize: 11 }} />
               <YAxis type="category" dataKey="canal" tick={{ fontSize: 11 }} width={80} />
               <Tooltip formatter={(v) => integer(Number(v))} />
-              <Bar dataKey="total_clientes" name="Clientes" fill={CHART_COLORS.blue} radius={[0, 3, 3, 0]} />
+              <Bar dataKey="total_clientes" name="Clientes" fill={CHART_COLORS.blue} radius={[0, 3, 3, 0]}>
+                <LabelList dataKey="total_clientes" position="right" style={{ fontSize: 10, fill: '#374151' }}
+                  formatter={(v: unknown) => integer(Number(v))} />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -134,7 +137,10 @@ export default function Clientes() {
               <XAxis type="number" tick={{ fontSize: 11 }} />
               <YAxis type="category" dataKey="uf" tick={{ fontSize: 11 }} width={28} />
               <Tooltip formatter={(v) => integer(Number(v))} />
-              <Bar dataKey="total_clientes" name="Clientes" fill={CHART_COLORS.teal} radius={[0, 3, 3, 0]} />
+              <Bar dataKey="total_clientes" name="Clientes" fill={CHART_COLORS.teal} radius={[0, 3, 3, 0]}>
+                <LabelList dataKey="total_clientes" position="right" style={{ fontSize: 10, fill: '#374151' }}
+                  formatter={(v: unknown) => integer(Number(v))} />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -150,6 +156,8 @@ export default function Clientes() {
                 {canaisFiltrados.map((entry) => (
                   <Cell key={entry.canal} fill={entry.score_fidelidade_medio >= META_SCORE ? SEMANTIC_COLORS.ok : SEMANTIC_COLORS.meta} />
                 ))}
+                <LabelList dataKey="score_fidelidade_medio" position="right" style={{ fontSize: 10, fill: '#374151' }}
+                  formatter={(v: unknown) => Number(v).toFixed(1)} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>

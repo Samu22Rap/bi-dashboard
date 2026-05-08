@@ -1,6 +1,7 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, Cell, FunnelChart, Funnel, LabelList,
+  // LabelList já importado — usado também nas barras
 } from 'recharts'
 import { useDiagnostico } from '@/hooks/useDiagnostico'
 import { useFilters } from '@/hooks/useFilters'
@@ -159,6 +160,8 @@ export default function Diagnostico() {
                     />
                   )
                 })}
+                <LabelList dataKey="taxa" position="top" style={{ fontSize: 10, fill: '#374151' }}
+                  formatter={(v: unknown) => pct(Number(v), 2)} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -179,6 +182,8 @@ export default function Diagnostico() {
                 {canaisFiltrados.map((entry) => (
                   <Cell key={entry.canal} fill={entry.taxa_conversao >= MEDIA_CONVERSAO ? SEMANTIC_COLORS.ok : SEMANTIC_COLORS.error} />
                 ))}
+                <LabelList dataKey="taxa_conversao" position="right" style={{ fontSize: 10, fill: '#374151' }}
+                  formatter={(v: unknown) => pct(Number(v), 2)} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -191,7 +196,10 @@ export default function Diagnostico() {
               <XAxis type="number" tick={{ fontSize: 11 }} />
               <YAxis type="category" dataKey="motivo" tick={{ fontSize: 10 }} width={130} />
               <Tooltip formatter={(v) => integer(Number(v))} />
-              <Bar dataKey="quantidade" name="Tickets" fill={CHART_COLORS.amber} radius={[0, 3, 3, 0]} />
+              <Bar dataKey="quantidade" name="Tickets" fill={CHART_COLORS.amber} radius={[0, 3, 3, 0]}>
+                <LabelList dataKey="quantidade" position="right" style={{ fontSize: 10, fill: '#374151' }}
+                  formatter={(v: unknown) => integer(Number(v))} />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>

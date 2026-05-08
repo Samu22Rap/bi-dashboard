@@ -1,6 +1,6 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
-  ResponsiveContainer, ReferenceLine, ComposedChart, Line, Cell,
+  ResponsiveContainer, ReferenceLine, ComposedChart, Line, Cell, LabelList,
 } from 'recharts'
 import { useMarketing } from '@/hooks/useMarketing'
 import { useFilters } from '@/hooks/useFilters'
@@ -155,6 +155,8 @@ export default function Marketing() {
                 {canaisFiltrados.map((entry) => (
                   <Cell key={entry.canal} fill={entry.cac <= META_CAC ? SEMANTIC_COLORS.ok : SEMANTIC_COLORS.error} />
                 ))}
+                <LabelList dataKey="cac" position="right" style={{ fontSize: 10, fill: '#374151' }}
+                  formatter={(v: unknown) => brl(Number(v))} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -171,7 +173,10 @@ export default function Marketing() {
               <XAxis type="number" tickFormatter={(v) => `${v}x`} tick={{ fontSize: 11 }} />
               <YAxis type="category" dataKey="campanha" tick={{ fontSize: 10 }} width={130} />
               <Tooltip formatter={(v) => roiFmt(Number(v))} />
-              <Bar dataKey="roi" name="ROI" fill={CHART_COLORS.blue} radius={[0, 3, 3, 0]} />
+              <Bar dataKey="roi" name="ROI" fill={CHART_COLORS.blue} radius={[0, 3, 3, 0]}>
+                <LabelList dataKey="roi" position="right" style={{ fontSize: 10, fill: '#374151' }}
+                  formatter={(v: unknown) => roiFmt(Number(v))} />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>

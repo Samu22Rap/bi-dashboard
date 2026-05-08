@@ -1,7 +1,7 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, Cell, ScatterChart,
-  Scatter, ZAxis,
+  Scatter, ZAxis, LabelList,
 } from 'recharts'
 import { useProdutos } from '@/hooks/useProdutos'
 import { LoadingState } from '@/components/shared/LoadingState'
@@ -64,7 +64,10 @@ export default function Produtos() {
               <XAxis type="number" tickFormatter={(v) => `R$${(v / 1000).toFixed(0)}K`} tick={{ fontSize: 11 }} />
               <YAxis type="category" dataKey="categoria" tick={{ fontSize: 11 }} width={70} />
               <Tooltip formatter={(v) => brl(Number(v))} />
-              <Bar dataKey="receita" name="Receita" fill={CHART_COLORS.blue} radius={[0, 3, 3, 0]} />
+              <Bar dataKey="receita" name="Receita" fill={CHART_COLORS.blue} radius={[0, 3, 3, 0]}>
+                <LabelList dataKey="receita" position="right" style={{ fontSize: 10, fill: '#374151' }}
+                  formatter={(v: unknown) => { const n = Number(v); return n >= 1000 ? `R$${(n/1000).toFixed(0)}K` : brl(n) }} />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
@@ -82,6 +85,8 @@ export default function Produtos() {
                 {filtradas.map((entry) => (
                   <Cell key={entry.categoria} fill={entry.desconto_medio_pct > META_DESCONTO ? SEMANTIC_COLORS.error : SEMANTIC_COLORS.ok} />
                 ))}
+                <LabelList dataKey="desconto_medio_pct" position="right" style={{ fontSize: 10, fill: '#374151' }}
+                  formatter={(v: unknown) => pct(Number(v), 1)} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -98,7 +103,10 @@ export default function Produtos() {
               <XAxis type="number" tickFormatter={(v) => `${v}%`} tick={{ fontSize: 11 }} domain={[0, 60]} />
               <YAxis type="category" dataKey="categoria" tick={{ fontSize: 11 }} width={70} />
               <Tooltip formatter={(v) => pct(Number(v))} />
-              <Bar dataKey="margem_pct" name="Margem" fill={CHART_COLORS.green} radius={[0, 3, 3, 0]} />
+              <Bar dataKey="margem_pct" name="Margem" fill={CHART_COLORS.green} radius={[0, 3, 3, 0]}>
+                <LabelList dataKey="margem_pct" position="right" style={{ fontSize: 10, fill: '#374151' }}
+                  formatter={(v: unknown) => pct(Number(v), 1)} />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
