@@ -19,7 +19,7 @@ const CANAL_OPTIONS = [
   { value: 'Meta Ads',       label: 'Meta Ads' },
   { value: 'Google Ads',     label: 'Google Ads' },
   { value: 'E-mail',         label: 'E-mail' },
-  { value: 'Busca Organica', label: 'Busca Organica' },
+  { value: 'Busca Orgânica', label: 'Busca Orgânica' },
   { value: 'Direto',         label: 'Direto' },
   { value: 'TikTok Ads',     label: 'TikTok Ads' },
 ]
@@ -71,13 +71,13 @@ export default function Clientes() {
       <KpiGrid cols={4}>
         <KpiCard label="Clientes Cadastrados" value={integer(totalCadastrados)} variant="neutral" />
         <KpiCard label="Compradores Ativos"   value={integer(totalCompradores)} variant="ok" />
-        <KpiCard label="Taxa de Ativacao"     value={pct(taxaAtivacao)}         variant="ok"   sublabel="Clientes que compraram" />
-        <KpiCard label="Sem E-mail"           value={integer(semEmail)}          variant="alert" sublabel="Leads nao captados" />
+        <KpiCard label="Taxa de Ativação"     value={pct(taxaAtivacao)}         variant="ok"   sublabel="Clientes que compraram" />
+        <KpiCard label="Sem E-mail"           value={integer(semEmail)}          variant="alert" sublabel="Leads não captados" />
       </KpiGrid>
 
       {/* Linha 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ChartCard title="Clientes por Canal de Aquisicao" height={260}>
+        <ChartCard title="Clientes por Canal de Aquisição" height={260}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={canaisFiltrados} layout="vertical" margin={{ top: 4, right: 32, left: 8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
@@ -92,7 +92,7 @@ export default function Clientes() {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Distribuicao por Faixa de Renda" height={260}>
+        <ChartCard title="Distribuição por Faixa de Renda" height={260}>
           {rendasFiltradas.length > 1 ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>

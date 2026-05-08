@@ -73,7 +73,7 @@ export default function Produtos() {
         </ChartCard>
 
         {/* Desconto médio — vermelho se > 12% */}
-        <ChartCard title="Desconto Medio por Categoria" description={`Alerta: desconto > ${META_DESCONTO}%`} height={260}>
+        <ChartCard title="Desconto Médio por Categoria" description={`Alerta: desconto > ${META_DESCONTO}%`} height={260}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={filtradas} layout="vertical" margin={{ top: 4, right: 32, left: 8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
@@ -112,11 +112,11 @@ export default function Produtos() {
         </ChartCard>
 
         {/* Scatter: ticket médio × pedidos */}
-        <ChartCard title="Ticket Medio vs Volume de Pedidos" description="Bolhas proporcionais a receita" height={240}>
+        <ChartCard title="Ticket Médio vs Volume de Pedidos" description="Bolhas proporcionais à receita" height={240}>
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart margin={{ top: 16, right: 24, left: 0, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
-              <XAxis dataKey="ticket_medio" name="Ticket Medio" tickFormatter={(v) => `R$${v}`} tick={{ fontSize: 11 }} label={{ value: 'Ticket Medio', position: 'insideBottom', offset: -4, fontSize: 11 }} />
+              <XAxis dataKey="ticket_medio" name="Ticket Médio" tickFormatter={(v) => `R$${v}`} tick={{ fontSize: 11 }} label={{ value: 'Ticket Médio', position: 'insideBottom', offset: -4, fontSize: 11 }} />
               <YAxis dataKey="pedidos" name="Pedidos" tick={{ fontSize: 11 }} />
               <ZAxis dataKey="receita" range={[60, 400]} name="Receita" />
               <Tooltip

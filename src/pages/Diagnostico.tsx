@@ -1,7 +1,6 @@
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, Cell, FunnelChart, Funnel, LabelList,
-  // LabelList já importado — usado também nas barras
 } from 'recharts'
 import { useDiagnostico } from '@/hooks/useDiagnostico'
 import { useFilters } from '@/hooks/useFilters'
@@ -28,7 +27,7 @@ const CANAL_OPTIONS = [
   { value: 'E-mail',         label: 'E-mail' },
   { value: 'Meta Ads',       label: 'Meta Ads' },
   { value: 'Google Ads',     label: 'Google Ads' },
-  { value: 'Busca Organica', label: 'Busca Organica' },
+  { value: 'Busca Orgânica', label: 'Busca Orgânica' },
   { value: 'Direto',         label: 'Direto' },
   { value: 'TikTok Ads',     label: 'TikTok Ads' },
 ]
@@ -37,7 +36,7 @@ const MOTIVO_COLS = [
   { key: 'motivo',               header: 'Motivo' },
   { key: 'quantidade',           header: 'Qtd',           align: 'right' as const, cell: (r: MotivoAtendimento) => integer(r.quantidade) },
   { key: 'percentual',           header: '%',              align: 'right' as const, cell: (r: MotivoAtendimento) => pct(r.percentual) },
-  { key: 'resolucao_media_dias', header: 'Resolucao Avg',  align: 'right' as const, cell: (r: MotivoAtendimento) => days(r.resolucao_media_dias) },
+  { key: 'resolucao_media_dias', header: 'Resolução Avg',  align: 'right' as const, cell: (r: MotivoAtendimento) => days(r.resolucao_media_dias) },
 ]
 
 export default function Diagnostico() {
@@ -114,7 +113,7 @@ export default function Diagnostico() {
 
       {/* Linha 1 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ChartCard title="Funil de Conversao" description={filters.dispositivo === 'all' ? 'Todos os dispositivos' : filters.dispositivo} height={280}>
+        <ChartCard title="Funil de Conversão" description={filters.dispositivo === 'all' ? 'Todos os dispositivos' : filters.dispositivo} height={280}>
           <ResponsiveContainer width="100%" height="100%">
             <FunnelChart>
               <Tooltip formatter={(v) => integer(Number(v))} />
@@ -135,7 +134,7 @@ export default function Diagnostico() {
           </ResponsiveContainer>
         </ChartCard>
 
-        <ChartCard title="Conversao por Dispositivo" description={`Media geral: ${pct(MEDIA_CONVERSAO)}`} height={280}>
+        <ChartCard title="Conversão por Dispositivo" description={`Média geral: ${pct(MEDIA_CONVERSAO)}`} height={280}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
               data={funil.map((d) => ({ ...d, taxa: (d.pedidos / d.sessoes) * 100 }))}
@@ -147,7 +146,7 @@ export default function Diagnostico() {
               <Tooltip formatter={(v) => pct(Number(v))} />
               <ReferenceLine y={MEDIA_CONVERSAO} stroke={SEMANTIC_COLORS.meta} strokeDasharray="4 4"
                 label={{ value: 'Media', position: 'right', fontSize: 10, fill: SEMANTIC_COLORS.meta }} />
-              <Bar dataKey="taxa" name="Conversao" radius={[3, 3, 0, 0]}>
+              <Bar dataKey="taxa" name="Conversão" radius={[3, 3, 0, 0]}>
                 {funil.map((entry) => {
                   const isSelected = filters.dispositivo === 'all' || entry.dispositivo === filters.dispositivo
                   const taxa = (entry.pedidos / entry.sessoes) * 100
@@ -170,7 +169,7 @@ export default function Diagnostico() {
 
       {/* Linha 2 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <ChartCard title="Conversao por Canal de Origem" description={`Verde >= ${pct(MEDIA_CONVERSAO)} · Vermelho abaixo`} height={260}>
+        <ChartCard title="Conversão por Canal de Origem" description={`Verde >= ${pct(MEDIA_CONVERSAO)} · Vermelho abaixo`} height={260}>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={canaisFiltrados} layout="vertical" margin={{ top: 4, right: 32, left: 8, bottom: 0 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" horizontal={false} />
@@ -178,7 +177,7 @@ export default function Diagnostico() {
               <YAxis type="category" dataKey="canal" tick={{ fontSize: 11 }} width={80} />
               <Tooltip formatter={(v) => pct(Number(v))} />
               <ReferenceLine x={MEDIA_CONVERSAO} stroke={SEMANTIC_COLORS.meta} strokeDasharray="4 4" />
-              <Bar dataKey="taxa_conversao" name="Conversao" radius={[0, 3, 3, 0]}>
+              <Bar dataKey="taxa_conversao" name="Conversão" radius={[0, 3, 3, 0]}>
                 {canaisFiltrados.map((entry) => (
                   <Cell key={entry.canal} fill={entry.taxa_conversao >= MEDIA_CONVERSAO ? SEMANTIC_COLORS.ok : SEMANTIC_COLORS.error} />
                 ))}
