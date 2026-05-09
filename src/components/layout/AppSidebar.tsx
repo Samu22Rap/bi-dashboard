@@ -2,11 +2,11 @@ import { NavLink, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
-  { label: 'Visao Executiva', path: '/' },
+  { label: 'Visão Executiva', path: '/' },
   { label: 'Marketing', path: '/marketing' },
   { label: 'Produtos', path: '/produtos' },
   { label: 'Clientes', path: '/clientes' },
-  { label: 'Diagnostico', path: '/diagnostico' },
+  { label: 'Diagnóstico', path: '/diagnostico' },
 ] as const
 
 export function AppSidebar() {

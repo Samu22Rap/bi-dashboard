@@ -25,10 +25,10 @@ const CANAL_OPTIONS = [
 ]
 
 const RENDA_OPTIONS = [
-  { value: 'Ate R$ 2 mil',       label: 'Ate R$ 2 mil' },
-  { value: 'R$ 2 a 5 mil',       label: 'R$ 2 a 5 mil' },
-  { value: 'R$ 5 a 10 mil',      label: 'R$ 5 a 10 mil' },
-  { value: 'Acima de R$ 10 mil', label: 'Acima R$ 10 mil' },
+  { value: 'Até R$ 2 mil',       label: 'Até R$ 2 mil' },
+  { value: 'R$ 2–5 mil',         label: 'R$ 2–5 mil' },
+  { value: 'R$ 5–8 mil',         label: 'R$ 5–8 mil' },
+  { value: 'Acima de R$ 8 mil',  label: 'Acima de R$ 8 mil' },
 ]
 
 export default function Clientes() {

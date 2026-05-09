@@ -108,7 +108,14 @@ export default function Diagnostico() {
           sublabel={`Média: ${pct(MEDIA_CONVERSAO)}`}
         />
         <KpiCard label="Tickets de Suporte" value={integer(totalTickets)} variant="neutral" />
-        <KpiCard label="Principal Motivo"   value={principalMotivo}       variant="alert" sublabel={`${pct(motivos[0]?.percentual ?? 0)} dos tickets`} />
+        <KpiCard
+          label="Principal Motivo"
+          value={principalMotivo}
+          variant="alert"
+          sublabel={hasActive
+            ? 'Dado global — suporte não tem breakdown por dispositivo/canal'
+            : `${pct(motivos[0]?.percentual ?? 0)} dos tickets`}
+        />
       </KpiGrid>
 
       {/* Linha 1 */}
@@ -121,9 +128,9 @@ export default function Diagnostico() {
                 <LabelList
                   dataKey="value"
                   position="center"
-                  fill="#fff"
+                  fill="#1f2937"
                   fontSize={12}
-                  fontWeight={600}
+                  fontWeight={700}
                   formatter={(v: unknown) => {
                     const n = Number(v)
                     return isNaN(n) || n === 0 ? '' : integer(n)

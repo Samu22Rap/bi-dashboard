@@ -1,11 +1,11 @@
 import { useLocation } from 'react-router-dom'
 
 const PAGE_TITLES: Record<string, string> = {
-  '/': 'Visao Executiva',
+  '/': 'Visão Executiva',
   '/marketing': 'Marketing',
   '/produtos': 'Produtos',
   '/clientes': 'Clientes',
-  '/diagnostico': 'Diagnostico',
+  '/diagnostico': 'Diagnóstico',
 }
 
 export function AppHeader() {
@@ -18,7 +18,7 @@ export function AppHeader() {
 
       <div className="flex items-center gap-2">
         <span className="inline-flex items-center rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] font-medium text-amber-700">
-          Dados Sinteticos
+          Dados Sintéticos
         </span>
         <span className="inline-flex items-center rounded-full border border-green-200 bg-green-50 px-2.5 py-0.5 text-[11px] font-medium text-green-700">
           Jan-Jun 2025
