@@ -78,11 +78,15 @@ export default function Diagnostico() {
     ? (disp === 'Desktop' ? funilFiltrado[0] : funil.find((d) => d.dispositivo === 'Desktop'))
     : null
 
+  const tabletData  = disp === 'all' || disp === 'Tablet'
+    ? (disp === 'Tablet' ? funilFiltrado[0] : funil.find((d) => d.dispositivo === 'Tablet'))
+    : null
+
   const convMobile  = mobileData  ? (mobileData.pedidos  / mobileData.sessoes)  * 100 : null
   const convDesktop = desktopData ? (desktopData.pedidos / desktopData.sessoes) * 100 : null
+  const convTablet  = tabletData  ? (tabletData.pedidos  / tabletData.sessoes)  * 100 : null
 
-  const totalTickets    = motivos.reduce((s, m) => s + m.quantidade, 0)
-  const principalMotivo = motivos[0]?.motivo ?? '—'
+  const totalTickets = motivos.reduce((s, m) => s + m.quantidade, 0)
 
   const hasActive = disp !== 'all' || filters.canal !== 'all'
 
@@ -107,15 +111,13 @@ export default function Diagnostico() {
           variant={convDesktop !== null ? (convDesktop >= MEDIA_CONVERSAO ? 'ok' : 'alert') : 'neutral'}
           sublabel={`Média: ${pct(MEDIA_CONVERSAO)}`}
         />
-        <KpiCard label="Tickets de Suporte" value={integer(totalTickets)} variant="neutral" />
         <KpiCard
-          label="Principal Motivo"
-          value={principalMotivo}
-          variant="alert"
-          sublabel={hasActive
-            ? 'Dado global — suporte não tem breakdown por dispositivo/canal'
-            : `${pct(motivos[0]?.percentual ?? 0)} dos tickets`}
+          label="Conversão Tablet"
+          value={convTablet !== null ? pct(convTablet) : '—'}
+          variant={convTablet !== null ? (convTablet >= MEDIA_CONVERSAO ? 'ok' : 'alert') : 'neutral'}
+          sublabel={`Média: ${pct(MEDIA_CONVERSAO)}`}
         />
+        <KpiCard label="Tickets de Suporte" value={integer(totalTickets)} variant="neutral" />
       </KpiGrid>
 
       {/* Linha 1 */}
